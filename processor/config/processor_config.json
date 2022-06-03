@@ -1,0 +1,10 @@
+{
+  "spark_loglevel" : "ERROR",
+  "tcp_host" : "0.0.0.0",
+  "tcp_port" : 5555,
+  "mongo_host" : "127.0.0.1",
+  "mongo_port" : "27017",
+  "mongo_database" : "ultimate-demo",
+  "mongo_collection" : "tweets",
+  "covid_source_url" : "https://www.worldometers.info/coronavirus/"
+}

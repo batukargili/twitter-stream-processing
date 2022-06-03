@@ -19,7 +19,15 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
  > Ubuntu:  https://phoenixnap.com/kb/install-spark-on-ubuntu
 
 ### MongoDB
- > docker run -p 27027:27027 mongo:4.0.0
+ > docker pull mongo
+
+ > docker run -d  --name mongodb -p 27017:27017 mongo
+
+ > docker exec -it mongodb bash
+
+ > mongo 
+
+ > use ultimate-demo
 
 ## Streaming Flow
 1. **listen_tcp_server** function creates readStream in Socket format and starts fetching new tweets from socket.
@@ -38,7 +46,25 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
 
 
 ## Running Locally
-Create Environment:
+### Config
+**processor_config.json** file under the processor/config module has the config parameters. 
+
+```
+{
+  "spark_loglevel" : "ERROR",
+  "tcp_host" : "0.0.0.0",
+  "tcp_port" : 5555,
+  "mongo_host" : "127.0.0.1",
+  "mongo_port" : "27017",
+  "mongo_database" : "ultimate-demo",
+  "mongo_collection" : "tweets",
+  "covid_source_url" : "https://www.worldometers.info/coronavirus/"
+}
+```
+
+
+
+### Create Environment:
 
     python3 -m venv pyspark_venv
 
@@ -46,13 +72,13 @@ Create Environment:
 
     pip install -r requirements.txt
 
-Run Tweet Producer in a separate terminal:
+### Run Tweet Producer in a separate terminal:
 
-    python twitter_stream_simulator.py 
+    python tweetproducer/twitter_stream_simulator.py 
 
-Run pyspark code with virtual environments python version and mongo packages:  
+### Run pyspark code with virtual environments python version and mongo packages:  
 
-    PYSPARK_PYTHON=python spark-submit --packages org.mongodb.spark:mongo-spark-connector:10.0.2 tweetprocessor.py localhost 9999
+    PYSPARK_PYTHON=python spark-submit --packages org.mongodb.spark:mongo-spark-connector:10.0.2 processor/tweetprocessor.py localhost 9999
 
 
 
