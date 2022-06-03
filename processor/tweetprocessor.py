@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import window, collect_list, regexp_replace, lit
-#spark-submit --packages org.mongodb.spark:mongo-spark-connector:10.0.2 tweetprocessor.py localhost 9999
+
 app_name = "tweet-read"
 app_loglevel = "ERROR"
 tcp_host = "0.0.0.0"
@@ -13,6 +13,12 @@ url = "https://www.worldometers.info/coronavirus/"
 
 
 def get_covid_count():
+    """
+
+    Returns
+    -------
+
+    """
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -37,6 +43,7 @@ def listen_tcp_server(spark_session):
 
 
 def filter_tweets(tweets):
+    """ ???? """
     filtered_tweets = tweets.select((tweets.value).alias("tweet"), (tweets.timestamp).alias("timestamp")) \
         .withColumn('tweet', regexp_replace('tweet', '#', '')) \
         .withColumn('tweet', regexp_replace('tweet', 'RT', '')) \
@@ -45,6 +52,16 @@ def filter_tweets(tweets):
 
 
 def groupby_window_tweets(tweets):
+    """
+    ??????
+    Parameters
+    ----------
+    tweets
+
+    Returns
+    -------
+    ????
+    """
     buffered_tweets = tweets \
         .withWatermark("timestamp", "2 seconds") \
         .groupBy(window("timestamp", "20 seconds").alias("timestamp")) \
@@ -53,6 +70,7 @@ def groupby_window_tweets(tweets):
 
 
 def sink_tweets(tweets):
+    """ ??? """
     sink_query = tweets \
         .writeStream \
         .outputMode("append") \
@@ -63,7 +81,29 @@ def sink_tweets(tweets):
     return sink_query
 
 
+def foreach_batch_processor(df, epoch_id):
+    """
+    ???
+    Parameters
+    ----------
+    df
+    epoch_id
+
+    Returns
+    -------
+    ??
+    """
+    # get covid cases
+    covid_cases = get_covid_count()
+    print("Covid Cases:" + str(covid_cases))
+    df_with_covid = df.withColumn("covid_cases", lit(covid_cases))
+    # write mongo
+    df_with_covid.printSchema()
+    mongo_sink = mongo_sink_tweets(df_with_covid)
+
+
 def mongo_sink_tweets(tweets):
+    """ ???? """
     mongo_writer = tweets \
         .write \
         .format("mongodb") \
@@ -72,16 +112,6 @@ def mongo_sink_tweets(tweets):
         .option("collection", "tweets") \
         .save()
     return mongo_writer
-
-
-def foreach_batch_processor(df, epoch_id):
-    # get covid cases
-    covid_cases = get_covid_count()
-    print("Covid Cases:" + str(covid_cases))
-    df_with_covid = df.withColumn("covid_cases", lit(covid_cases))
-    # write mongo
-    df_with_covid.printSchema()
-    mongo_sink = mongo_sink_tweets(df_with_covid)
 
 
 if __name__ == '__main__':
