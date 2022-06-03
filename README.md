@@ -4,7 +4,7 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
 
 ## Requirements
 
-| Requirement   | Version                                       |
+| ~Req.         | Version                                       |
 |---------------|---------------------------------------------- |
 | Python        | 3.8.6                                         |
 | Spark         | 3.2.1                                         |
@@ -19,15 +19,15 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
  > Ubuntu:  https://phoenixnap.com/kb/install-spark-on-ubuntu
 
 ### MongoDB
- > docker pull mongo
+    docker pull mongo
 
- > docker run -d  --name mongodb -p 27017:27017 mongo
+    docker run -d  --name mongodb -p 27017:27017 mongo
 
- > docker exec -it mongodb bash
+    docker exec -it mongodb bash
 
- > mongo 
+    mongo 
 
- > use ultimate-demo
+    use ultimate-demo
 
 ## Streaming Flow
 1. **listen_tcp_server** function creates readStream in Socket format and starts fetching new tweets from socket.
