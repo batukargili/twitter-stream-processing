@@ -1,9 +1,8 @@
-import requests
-from bs4 import BeautifulSoup
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import window, collect_list, regexp_replace, lit
 from config import app_name, spark_loglevel, tcp_host, tcp_port, mongo_database, mongo_collection, covid_source_url
 from logger import logger
+from webscrapper import get_covid_count
 
 
 def create_spark_session():
@@ -109,34 +108,11 @@ def foreach_batch_processor(df, epoch_id):
             # add covid cases as df column with literal value
             df_with_covid = df.withColumn("covid_cases", lit(covid_cases))
             # write df to mongo
-            logger.info(f"""Microbatch DataFrame Processed Successfully {str(df.head(1))}""")
+            logger.info(f"""Microbatch DataFrame Processed Successfully""")
             mongo_sink_tweets(df_with_covid)
     except Exception as e:
         logger.info(f"""!!! Microbatch DataFrame Process Failed with Exception: {e}""")
 
-
-def get_covid_count():
-    """
-    Web scrapper with BeautifulSoup
-    Gets total covid cases value from worldometers.info
-    Reaching value with nested divs.
-
-                div id = maincounter-wrap
-                    div class = maincounter-number
-                        span <covid_value>
-    Returns
-    -------
-    int covid_cases_value
-    """
-    page = requests.get(covid_source_url)
-    soup = BeautifulSoup(page.text, 'html.parser')
-
-    covid_cases_value = soup \
-        .find("div", attrs={"id": "maincounter-wrap"}) \
-        .find("div", attrs={"class": "maincounter-number"}) \
-        .find("span").text
-
-    return covid_cases_value
 
 
 def mongo_sink_tweets(tweets):
