@@ -4,7 +4,7 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
 
 ## Requirements
 
-| ~Req.         | Version                                       |
+| Software      | Version                                       |
 |---------------|---------------------------------------------- |
 | Python        | 3.8.6                                         |
 | Spark         | 3.2.1                                         |
