@@ -111,7 +111,7 @@ def foreach_batch_processor(df, epoch_id):
             logger.info(f"""Microbatch DataFrame Processed Successfully""")
             mongo_sink_tweets(df_with_covid)
     except Exception as e:
-        logger.info(f"""!!! Microbatch DataFrame Process Failed with Exception: {e}""")
+        logger.error(f"""!!! Microbatch DataFrame Process Failed with Exception: {e}""")
 
 
 
