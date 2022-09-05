@@ -27,7 +27,7 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
 
     mongo 
 
-    use ultimate-demo
+    use twitter-demo
 
 ## Streaming Flow
 1. **listen_tcp_server** function creates readStream in Socket format and starts fetching new tweets from socket.
@@ -56,7 +56,7 @@ This project processes Twitter's live tweat stream, merges covid cases with twee
   "tcp_port" : 5555,
   "mongo_host" : "127.0.0.1",
   "mongo_port" : "27017",
-  "mongo_database" : "ultimate-demo",
+  "mongo_database" : "twitter-demo",
   "mongo_collection" : "tweets",
   "covid_source_url" : "https://www.worldometers.info/coronavirus/"
 }
